@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Poorna's 16th bday photobooth!</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Courier+Prime:wght@400;700&family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&family=Parisienne&display=swap');
+
+  :root{
+    --paper:#f6eefb;
+    --ink:#3a2154;
+    --accent:#8a5cc4;
+    --accent-deep:#6d3fa8;
+    --gold:#e8b94d;
+    --gold-deep:#c99431;
+    --curtain:#a07bd0;
+    --curtain-dark:#6e4aa6;
+    --shadow:rgba(80,45,120,.3);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%}
+  body{
+    font-family:'Courier Prime',monospace;
+    background:
+      radial-gradient(circle at 15% 12%, rgba(232,185,77,.22) 0%, transparent 22%),
+      radial-gradient(circle at 78% 18%, rgba(232,185,77,.18) 0%, transparent 20%),
+      radial-gradient(circle at 60% 8%, rgba(255,210,140,.2) 0%, transparent 18%),
+      linear-gradient(180deg, #c9a9d8 0%, #a87fc4 35%, #8b5fb0 70%, #6e4499 100%);
+    background-attachment:fixed;
+    color:var(--ink);
+    min-height:100%;
+    display:flex;flex-direction:column;align-items:center;
+    padding:0 16px 48px;
+    -webkit-font-smoothing:antialiased;
+  }
+
+  /* ===== curtain valance ===== */
+  .valance{width:100%;max-width:520px;position:relative;margin-bottom:6px}
+  .swag{
+    height:74px;
+    background:repeating-linear-gradient(90deg,
+      var(--curtain) 0px, var(--curtain-dark) 22px, var(--curtain) 44px);
+    border-bottom-left-radius:50% 80%;border-bottom-right-radius:50% 80%;
+    box-shadow:inset 0 -10px 18px rgba(0,0,0,.18), 0 6px 12px rgba(0,0,0,.12);
+    position:relative;
+  }
+  .swag::after{
+    content:"";position:absolute;left:0;right:0;bottom:-1px;height:22px;
+    background:radial-gradient(circle at 12px -4px, transparent 12px, var(--curtain-dark) 13px) repeat-x;
+    background-size:24px 22px;
+  }
+  .lace{
+    height:26px;width:100%;
+    background:radial-gradient(circle at 12px 0, #fff 11px, transparent 12px) repeat-x;
+    background-size:24px 26px;filter:drop-shadow(0 2px 1px rgba(0,0,0,.1));margin-top:-2px;
+  }
+  .lace2{
+    height:14px;width:100%;
+    background:radial-gradient(circle at 8px 0, rgba(255,255,255,.9) 7px, transparent 8px) repeat-x;
+    background-size:16px 14px;margin-top:-6px;
+  }
+  .goldtrim{
+    height:4px;width:100%;margin-top:2px;
+    background:linear-gradient(90deg,transparent,var(--gold) 15%,#e6cf7a 50%,var(--gold) 85%,transparent);
+    box-shadow:0 1px 3px rgba(168,132,43,.4);
+  }
+
+  header{text-align:center;margin:14px 0 18px}
+  h1{
+    font-family:'Parisienne',cursive;
+    font-size:54px;letter-spacing:.5px;line-height:1.1;
+    background:linear-gradient(180deg,#ffe08a 0%,#f0c659 45%,#d4a23a 100%);
+    -webkit-background-clip:text;background-clip:text;color:transparent;
+    filter:drop-shadow(0 1px 3px rgba(50,25,80,.4));
+    padding:0 6px;
+  }
+  .tag{font-family:'Cormorant Garamond',serif;font-size:14px;letter-spacing:5px;text-transform:uppercase;color:#f3e3c4;margin-top:8px;font-weight:600}
+
+  .booth{width:100%;max-width:380px;display:flex;flex-direction:column;gap:16px}
+
+  .liveframe{
+    position:relative;width:100%;background:#2e1a47;border-radius:6px;overflow:hidden;
+    box-shadow:0 14px 30px var(--shadow);aspect-ratio:3 / 4;
+  }
+  video{width:100%;height:100%;object-fit:cover;display:block;transform:scaleX(-1)}
+  .cropguide{
+    position:absolute;top:0;bottom:0;left:50%;transform:translateX(-50%);
+    aspect-ratio:2 / 3.5;height:100%;
+    border:2px dashed rgba(255,255,255,.7);
+    box-shadow:0 0 0 2000px rgba(46,26,71,.3);pointer-events:none;z-index:2;
+  }
+
+  /* live filter classes */
+  video.flt-none{}
+  video.flt-bw{filter:grayscale(1) contrast(1.1)}
+  video.flt-sepia{filter:sepia(.55) contrast(1.05) brightness(1.02)}
+  video.flt-retro{filter:sepia(.25) saturate(1.3) contrast(1.05)}
+  video.flt-cool{filter:saturate(1.15) brightness(1.03) hue-rotate(-6deg)}
+  video.flt-pink{filter:saturate(1.2) brightness(1.05) hue-rotate(310deg) contrast(.98)}
+
+  .countdown{
+    position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+    font-family:'Parisienne',cursive;font-size:140px;color:#fff;
+    text-shadow:0 4px 18px rgba(0,0,0,.5);background:rgba(46,26,71,.18);pointer-events:none;z-index:3;
+  }
+  .flash{position:absolute;inset:0;background:#fff;opacity:0;pointer-events:none;z-index:4}
+  .flash.go{animation:flash .5s ease-out}
+  @keyframes flash{0%{opacity:.95}100%{opacity:0}}
+  .hint{
+    position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+    text-align:center;color:#d9c4f0;font-size:13px;padding:24px;line-height:1.6;z-index:2;
+  }
+
+  /* printing animation */
+  .printing{width:100%;max-width:380px;display:flex;flex-direction:column;align-items:center;gap:14px;padding:30px 0}
+  .slot{width:200px;height:14px;background:#2e1a47;border-radius:4px;position:relative;box-shadow:inset 0 3px 6px rgba(0,0,0,.5)}
+  .emerging{
+    width:160px;background:#fffdf8;border-radius:3px 3px 0 0;box-shadow:0 -4px 12px rgba(0,0,0,.18);
+    margin-top:-2px;height:0;overflow:hidden;display:flex;align-items:flex-end;justify-content:center;
+    animation:emerge 2.4s ease-in-out forwards;
+  }
+  @keyframes emerge{0%{height:0}100%{height:230px}}
+  .emerging img{width:100%;display:block}
+  .printtext{font-family:'Parisienne',cursive;font-size:30px;color:var(--accent-deep)}
+  .dots::after{content:"";animation:dots 1.4s steps(4,end) infinite}
+  @keyframes dots{0%{content:""}25%{content:"."}50%{content:".."}75%{content:"..."}100%{content:""}}
+
+  .printcard{background:#fffdf8;padding:14px 14px 0;border-radius:4px;box-shadow:0 14px 30px var(--shadow)}
+  .printcard .frame{position:relative;width:100%;aspect-ratio:2 / 3.5;border-radius:2px;overflow:hidden}
+  #shot{width:100%;height:100%;object-fit:cover;display:block}
+  .caption-line{font-family:'Parisienne',cursive;font-size:28px;text-align:center;padding:10px 4px 16px;color:var(--gold-deep);min-height:44px}
+
+  .row{display:flex;gap:10px;flex-wrap:wrap;justify-content:center}
+  button{
+    font-family:'Courier Prime',monospace;font-weight:700;font-size:14px;
+    padding:13px 20px;border:none;border-radius:4px;cursor:pointer;
+    background:var(--ink);color:var(--paper);transition:transform .08s ease, opacity .15s ease;letter-spacing:.5px;
+  }
+  button:hover{transform:translateY(-1px)}
+  button:active{transform:translateY(0)}
+  button.ghost{background:transparent;color:var(--ink);border:1.5px solid var(--ink)}
+  button.accent{background:var(--accent)}
+  button.big.gold{
+    background:linear-gradient(180deg,#d8b44a,#c9a23f 55%,#a8842b);
+    color:#fff;text-shadow:0 1px 1px rgba(91,46,146,.3);
+    box-shadow:0 6px 16px rgba(168,132,43,.35);
+  }
+  button.big{font-size:17px;padding:17px 24px;width:100%}
+  button:disabled{opacity:.4;cursor:not-allowed;transform:none}
+
+  .filters{display:flex;gap:8px;justify-content:center;flex-wrap:wrap}
+  .chip{
+    font-size:12px;font-weight:700;padding:9px 16px;border-radius:20px;cursor:pointer;
+    border:1.5px solid #fff;background:rgba(255,255,255,.92);color:#6d3fa8;letter-spacing:.5px;
+    transition:all .12s ease;box-shadow:0 2px 6px rgba(50,25,80,.2);
+  }
+  .chip.on{
+    background:linear-gradient(180deg,#ffe08a,#f0c659);color:#5a3410;
+    border-color:#fff;box-shadow:0 2px 10px rgba(232,185,77,.5);
+  }
+
+  .field{font-family:'Courier Prime',monospace;font-size:14px;padding:11px 14px;border:1.5px solid #cdb3e8;border-radius:4px;background:#fffdf8;color:var(--ink);width:100%;text-align:center}
+  .field:focus{outline:none;border-color:var(--accent)}
+  .panel{display:flex;flex-direction:column;gap:12px}
+  .label{font-size:11px;letter-spacing:2px;text-transform:uppercase;color:#f3e3c4;text-align:center;font-weight:700}
+
+  .printsteps{
+    background:#f3ebfb;border:1.5px dashed var(--accent);border-radius:8px;
+    padding:14px 16px;font-size:13px;line-height:1.7;color:#5b4078;margin-top:6px;
+  }
+  .printsteps b{color:var(--accent-deep)}
+  footer{margin-top:28px;font-size:11px;color:#e7d6f5;text-align:center;line-height:1.7}
+  .err{color:var(--accent-deep);font-size:13px;text-align:center;max-width:340px;line-height:1.6}
+  @media (prefers-reduced-motion:reduce){.flash.go{animation:none}h1{transform:none}.emerging{animation:emerge .8s ease forwards}}
+</style>
+</head>
+<body>
+
+  <div class="valance">
+    <div class="swag"></div><div class="lace"></div><div class="lace2"></div><div class="goldtrim"></div>
+  </div>
+
+  <header>
+    <h1>Poorna's 16th bday!</h1>
+    <div class="tag">step in &middot; smile &middot; print</div>
+  </header>
+
+  <div class="booth">
+    <!-- LIVE -->
+    <div id="liveStage">
+      <div class="liveframe">
+        <video id="video" class="flt-none" autoplay playsinline muted></video>
+        <div class="cropguide" id="cropguide" style="display:none"></div>
+        <div class="hint" id="hint">tap start camera to begin</div>
+        <div class="countdown" id="cd" style="display:none"></div>
+        <div class="flash" id="flash"></div>
+      </div>
+
+      <div class="panel" style="margin-top:16px">
+        <div class="label">filter</div>
+        <div class="filters" id="filters">
+          <button class="chip on" data-f="none">none</button>
+          <button class="chip" data-f="pink">glow</button>
+          <button class="chip" data-f="bw">b&amp;w</button>
+          <button class="chip" data-f="sepia">sepia</button>
+          <button class="chip" data-f="retro">retro</button>
+          <button class="chip" data-f="cool">cool</button>
+        </div>
+      </div>
+
+      <div class="row" style="margin-top:6px">
+        <button id="startBtn" class="accent">start camera</button>
+        <button id="snapBtn" disabled>take photo</button>
+      </div>
+      <p class="err" id="err"></p>
+    </div>
+
+    <!-- PRINTING -->
+    <div id="printStage" class="printing" style="display:none">
+      <div class="printtext">printing<span class="dots"></span></div>
+      <div class="slot"></div>
+      <div class="emerging" id="emerging"><img id="emergeImg" alt=""></div>
+    </div>
+
+    <!-- RESULT -->
+    <div id="resultStage" style="display:none">
+      <div class="printcard">
+        <div class="frame"><img id="shot" alt="your photo"></div>
+        <div class="caption-line" id="capLine">Poorna's 16th bday</div>
+      </div>
+
+      <div class="row" style="margin-top:16px">
+        <button id="saveBtn" class="accent big gold">save photo &amp; print</button>
+      </div>
+
+      <div class="printsteps" id="printsteps">
+        <b>to print:</b> after saving, open the <b>Nelko app</b> &rarr; tap <b>photo</b> &rarr; pick the photo you just saved &rarr; print. that's it!
+      </div>
+
+      <div class="row" style="margin-top:12px">
+        <button id="retakeBtn" class="ghost">take another</button>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    sized for 2&times;3.5 in &middot; 600&times;1050 px @ 300dpi<br>
+    the dashed box shows what gets printed
+  </footer>
+
+  <canvas id="canvas" style="display:none"></canvas>
+
+<script>
+const video=document.getElementById('video');
+const startBtn=document.getElementById('startBtn');
+const snapBtn=document.getElementById('snapBtn');
+const hint=document.getElementById('hint');
+const cd=document.getElementById('cd');
+const flash=document.getElementById('flash');
+const err=document.getElementById('err');
+const filters=document.getElementById('filters');
+const cropguide=document.getElementById('cropguide');
+const liveStage=document.getElementById('liveStage');
+const printStage=document.getElementById('printStage');
+const resultStage=document.getElementById('resultStage');
+const shot=document.getElementById('shot');
+const emergeImg=document.getElementById('emergeImg');
+const emerging=document.getElementById('emerging');
+const saveBtn=document.getElementById('saveBtn');
+const retakeBtn=document.getElementById('retakeBtn');
+const canvas=document.getElementById('canvas');
+
+let stream=null, activeFilter='none', lastDataUrl=null;
+const OUT_W=600, OUT_H=1050, BORDER=40, CAPTION_H=120;
+const CAPTION_TEXT="Poorna's 16th bday";
+
+const filterMap={none:'flt-none',pink:'flt-pink',bw:'flt-bw',sepia:'flt-sepia',retro:'flt-retro',cool:'flt-cool'};
+const canvasFilter={
+  none:'none',
+  pink:'saturate(1.2) brightness(1.05) hue-rotate(310deg) contrast(0.98)',
+  bw:'grayscale(1) contrast(1.1)',
+  sepia:'sepia(0.55) contrast(1.05) brightness(1.02)',
+  retro:'sepia(0.25) saturate(1.3) contrast(1.05)',
+  cool:'saturate(1.15) brightness(1.03) hue-rotate(-6deg)'
+};
+
+filters.addEventListener('click',e=>{
+  const b=e.target.closest('.chip'); if(!b) return;
+  [...filters.children].forEach(c=>c.classList.remove('on'));
+  b.classList.add('on');
+  activeFilter=b.dataset.f;
+  video.className=filterMap[activeFilter];
+});
+
+startBtn.addEventListener('click',async()=>{
+  err.textContent='';
+  try{
+    stream=await navigator.mediaDevices.getUserMedia({
+      video:{facingMode:'user', width:{ideal:1280}, height:{ideal:960}}, audio:false
+    });
+    video.srcObject=stream;
+    hint.style.display='none';
+    cropguide.style.display='block';
+    snapBtn.disabled=false;
+    startBtn.textContent='camera on';
+    startBtn.disabled=true;
+  }catch(e){
+    err.textContent='could not open the camera. allow camera access, then tap start again. (camera needs https or localhost.)';
+  }
+});
+
+snapBtn.addEventListener('click',()=>{
+  if(!stream) return;
+  snapBtn.disabled=true;
+  let n=3; cd.style.display='flex'; cd.textContent=n;
+  const tick=setInterval(()=>{
+    n--;
+    if(n>0){ cd.textContent=n; }
+    else{
+      clearInterval(tick); cd.style.display='none';
+      flash.classList.add('go'); setTimeout(()=>flash.classList.remove('go'),500);
+      capture(); snapBtn.disabled=false;
+    }
+  },1000);
+});
+
+function capture(){
+  canvas.width=OUT_W; canvas.height=OUT_H;
+  const ctx=canvas.getContext('2d');
+  ctx.fillStyle='#fffdf8'; ctx.fillRect(0,0,OUT_W,OUT_H);
+
+  const px=BORDER, py=BORDER, pw=OUT_W-BORDER*2, ph=OUT_H-BORDER*2-CAPTION_H;
+  const vw=video.videoWidth, vh=video.videoHeight;
+  const targetRatio=pw/ph, srcRatio=vw/vh;
+  let sx,sy,sw,sh;
+  if(srcRatio>targetRatio){ sh=vh; sw=vh*targetRatio; sx=(vw-sw)/2; sy=0; }
+  else{ sw=vw; sh=vw/targetRatio; sx=0; sy=(vh-sh)/2; }
+
+  ctx.save();
+  ctx.filter=canvasFilter[activeFilter];
+  ctx.translate(px+pw,py); ctx.scale(-1,1);
+  ctx.drawImage(video, sx,sy,sw,sh, 0,0, pw,ph);
+  ctx.restore();
+
+  const g=ctx.createRadialGradient(px+pw/2,py+ph/2,ph*0.35,px+pw/2,py+ph/2,ph*0.75);
+  g.addColorStop(0,'rgba(0,0,0,0)'); g.addColorStop(1,'rgba(50,20,40,0.16)');
+  ctx.fillStyle=g; ctx.fillRect(px,py,pw,ph);
+  ctx.strokeStyle='rgba(0,0,0,0.08)'; ctx.lineWidth=2; ctx.strokeRect(px,py,pw,ph);
+
+  // gold caption baked in
+  ctx.fillStyle='#a8842b'; ctx.textAlign='center'; ctx.textBaseline='middle';
+  ctx.font='58px "Parisienne", cursive';
+  ctx.fillText(CAPTION_TEXT, OUT_W/2, OUT_H-CAPTION_H/2+6);
+
+  lastDataUrl=canvas.toDataURL('image/png');
+  shot.src=lastDataUrl; emergeImg.src=lastDataUrl;
+
+  liveStage.style.display='none';
+  printStage.style.display='flex';
+  emerging.style.animation='none'; void emerging.offsetWidth; emerging.style.animation='';
+  setTimeout(()=>{ printStage.style.display='none'; resultStage.style.display='block'; },2600);
+}
+
+saveBtn.addEventListener('click',()=>{
+  if(!lastDataUrl) return;
+  const a=document.createElement('a');
+  a.href=lastDataUrl; a.download="poorna-16th-bday.png"; a.click();
+});
+
+retakeBtn.addEventListener('click',()=>{
+  resultStage.style.display='none';
+  liveStage.style.display='block';
+  lastDataUrl=null;
+});
+</script>
+</body>
+</html>
