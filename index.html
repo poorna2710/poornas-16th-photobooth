@@ -237,11 +237,13 @@
       </div>
 
       <div class="row" style="margin-top:16px">
-        <button id="saveBtn" class="accent big gold">save photo &amp; print</button>
+        <button id="saveBtn" class="accent big gold">save to photos</button>
       </div>
 
       <div class="printsteps" id="printsteps">
-        <b>to print:</b> after saving, open the <b>Nelko app</b> &rarr; tap <b>photo</b> &rarr; pick the photo you just saved &rarr; print. that's it!
+        <b>step 1:</b> tap <b>save to photos</b> &rarr; choose <b>Save Image</b> (or share straight to the Nelko app).<br>
+        <b>step 2:</b> open the <b>Nelko app</b> &rarr; tap <b>photo</b> &rarr; pick your photo &rarr; print!<br>
+        <span style="opacity:.8">tip: you can also press and hold the photo above to save it.</span>
       </div>
 
       <div class="row" style="margin-top:12px">
@@ -445,8 +447,31 @@ function capture(){
   setTimeout(()=>{ printStage.style.display='none'; resultStage.style.display='block'; },2600);
 }
 
-saveBtn.addEventListener('click',()=>{
+function dataUrlToFile(dataUrl, name){
+  const [head, body] = dataUrl.split(',');
+  const mime = head.match(/:(.*?);/)[1];
+  const bin = atob(body);
+  const arr = new Uint8Array(bin.length);
+  for(let i=0;i<bin.length;i++) arr[i]=bin.charCodeAt(i);
+  return new File([arr], name, {type:mime});
+}
+
+saveBtn.addEventListener('click',async()=>{
   if(!lastDataUrl) return;
+  const file = dataUrlToFile(lastDataUrl, "poorna-16th-bday.png");
+
+  // Preferred: native share sheet -> "Save Image" goes to Photos, or share to Nelko app
+  if(navigator.canShare && navigator.canShare({files:[file]})){
+    try{
+      await navigator.share({files:[file], title:"Poorna's 16th bday"});
+      return;
+    }catch(e){
+      // user cancelled or share failed -> fall through to download
+      if(e && e.name==='AbortError') return;
+    }
+  }
+
+  // Fallback: normal download
   const a=document.createElement('a');
   a.href=lastDataUrl; a.download="poorna-16th-bday.png"; a.click();
 });
